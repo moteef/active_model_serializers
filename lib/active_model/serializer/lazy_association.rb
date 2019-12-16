@@ -4,7 +4,7 @@ module ActiveModel
   class Serializer
     # @api private
     LazyAssociation = Struct.new(:reflection, :association_options) do
-      REFLECTION_OPTIONS = %i(key links polymorphic meta serializer virtual_value namespace).freeze
+      REFLECTION_OPTIONS = %i(key links polymorphic meta serializer each_serializer virtual_value namespace).freeze
 
       delegate :collection?, to: :reflection
 
@@ -79,6 +79,7 @@ module ActiveModel
         serializer_options[:serializer_context_class] = association_options.fetch(:parent_serializer).class
         serializer = reflection_options.fetch(:serializer, nil)
         serializer_options[:serializer] = serializer if serializer
+        serializer_options[:serializer] = reflection_options[:each_serializer] if reflection_options.key?(:each_serializer)
         serializer_options[:namespace]  = reflection_options[:namespace] if reflection_options[:namespace]
         serializer_class.new(object, serializer_options)
       end
